@@ -1,6 +1,8 @@
 from glob import glob
 import shutil
 import torch
+from gtts import gTTS
+import io
 from time import  strftime
 import os, sys, time
 from argparse import ArgumentParser
@@ -12,8 +14,7 @@ from src.generate_batch import get_data
 from src.generate_facerender_batch import get_facerender_data
 from src.utils.init_path import init_path
 import pyttsx3
-import io
-import tts_library
+
 
 def main(args):
     #torch.backends.cudnn.enabled = False
@@ -74,7 +75,15 @@ def main(args):
             ref_pose_coeff_path, _, _ =  preprocess_model.generate(ref_pose, ref_pose_frame_dir, args.preprocess, source_image_flag=False)
     else:
         ref_pose_coeff_path=None
-    synthesized_audio = tts_library.synthesize(text_input)
+        
+    def synthesize_text(text):
+        # Use gTTS to synthesize text to audio
+        tts = gTTS(text=text, lang='en')
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_buffer.seek(0)
+        return audio_buffer
+    synthesized_audio = synthesize_text(text_input)
     #audio2ceoff
     # batch = get_data(first_coeff_path, audio_path, device, ref_eyeblink_coeff_path, still=args.still)
     # coeff_path = audio_to_coeff.generate(batch, save_dir, pose_style, ref_pose_coeff_path)
