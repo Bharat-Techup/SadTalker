@@ -1,4 +1,5 @@
 from glob import glob
+import pyttsx3
 import shutil
 import tempfile
 import torch
@@ -77,6 +78,24 @@ def main(args):
     else:
         ref_pose_coeff_path=None
         
+        
+    
+    def synthesize_text_to_speech(text):
+        # Initialize the text-to-speech engine
+        engine = pyttsx3.init()
+        # Set properties (optional)
+        engine.setProperty('rate', 150)  # Speed of speech
+        engine.setProperty('volume', 1)   # Volume level (0.0 to 1.0)
+
+        # Say the text
+        engine.say(text)
+        
+        # Wait for speech to finish
+        engine.runAndWait()
+        
+    synthesize_output = synthesize_text_to_speech(text_input)
+
+        
     def synthesize_text(text):
         # Use gTTS to synthesize text to audio
         tts = gTTS(text=text, lang='en')
@@ -90,7 +109,7 @@ def main(args):
     #audio2ceoff
     # batch = get_data(first_coeff_path, audio_path, device, ref_eyeblink_coeff_path, still=args.still)
     # coeff_path = audio_to_coeff.generate(batch, save_dir, pose_style, ref_pose_coeff_path)
-    batch = get_data(first_coeff_path, synthesized_audio, device, ref_eyeblink_coeff_path, still=args.still)
+    batch = get_data(first_coeff_path, synthesize_output, device, ref_eyeblink_coeff_path, still=args.still)
     coeff_path = audio_to_coeff.generate(batch, save_dir, pose_style, ref_pose_coeff_path)
 
     # 3dface render
