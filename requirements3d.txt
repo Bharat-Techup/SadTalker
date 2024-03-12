@@ -20,3 +20,4 @@ gradio
 gfpgan
 safetensors
 pyttsx3
+pyaudio
