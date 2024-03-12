@@ -102,7 +102,14 @@ def main(args):
     data = get_facerender_data(coeff_path, crop_pic_path, first_coeff_path, None, 
                                 batch_size, input_yaw_list, input_pitch_list, input_roll_list,
                                 expression_scale=args.expression_scale, still_mode=args.still, preprocess=args.preprocess, size=args.size)
-    
+    print("data:-",data)
+    print("save_dir:-",save_dir)
+    print("pic_path:-",pic_path)
+    print("crop_info:-",crop_info)
+    print("args.enhancer:-",args.enhancer)
+    print("args.background_enhancer:-",args.background_enhancer)
+    print("args.preprocess:-",args.preprocess)
+    print("args.size:-",args.size)
     result = animate_from_coeff.generate(data, save_dir, pic_path, crop_info, \
                                 enhancer=args.enhancer, background_enhancer=args.background_enhancer, preprocess=args.preprocess, img_size=args.size)
     
