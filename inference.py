@@ -96,10 +96,10 @@ def main(args):
     # 3dface render
     if args.face3dvis:
         from src.face3d.visualize import gen_composed_video
-        gen_composed_video(args, device, first_coeff_path, coeff_path, None, os.path.join(save_dir, '3dface.mp4'))
+        gen_composed_video(args, device, first_coeff_path, coeff_path, synthesized_audio, os.path.join(save_dir, '3dface.mp4'))
     
     #coeff2video
-    data = get_facerender_data(coeff_path, crop_pic_path, first_coeff_path, None, 
+    data = get_facerender_data(coeff_path, crop_pic_path, first_coeff_path, synthesized_audio, 
                                 batch_size, input_yaw_list, input_pitch_list, input_roll_list,
                                 expression_scale=args.expression_scale, still_mode=args.still, preprocess=args.preprocess, size=args.size)
     print("data:-",data)
