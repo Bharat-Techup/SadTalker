@@ -1,5 +1,6 @@
 from glob import glob
 import shutil
+import tempfile
 import torch
 from gtts import gTTS
 import io
@@ -13,7 +14,7 @@ from src.facerender.animate import AnimateFromCoeff
 from src.generate_batch import get_data
 from src.generate_facerender_batch import get_facerender_data
 from src.utils.init_path import init_path
-import pyttsx3
+
 
 
 def main(args):
@@ -21,7 +22,7 @@ def main(args):
  
     
     pic_path = args.source_image
-    audio_path = args.driven_audio
+    # audio_path = args.driven_audio
     text_input = args.text_input
     save_dir = os.path.join(args.result_dir, strftime("%Y_%m_%d_%H.%M.%S"))
     os.makedirs(save_dir, exist_ok=True)
@@ -79,10 +80,12 @@ def main(args):
     def synthesize_text(text):
         # Use gTTS to synthesize text to audio
         tts = gTTS(text=text, lang='en')
-        audio_buffer = io.BytesIO()
-        tts.write_to_fp(audio_buffer)
-        audio_buffer.seek(0)
-        return audio_buffer
+        audio_tempfile = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+        tts.save(audio_tempfile.name)
+        # audio_buffer = io.BytesIO()
+        # tts.write_to_fp(audio_buffer)
+        # audio_buffer.seek(0)
+        return audio_tempfile.name
     synthesized_audio = synthesize_text(text_input)
     #audio2ceoff
     # batch = get_data(first_coeff_path, audio_path, device, ref_eyeblink_coeff_path, still=args.still)
@@ -93,10 +96,10 @@ def main(args):
     # 3dface render
     if args.face3dvis:
         from src.face3d.visualize import gen_composed_video
-        gen_composed_video(args, device, first_coeff_path, coeff_path, audio_path, os.path.join(save_dir, '3dface.mp4'))
+        gen_composed_video(args, device, first_coeff_path, coeff_path, None, os.path.join(save_dir, '3dface.mp4'))
     
     #coeff2video
-    data = get_facerender_data(coeff_path, crop_pic_path, first_coeff_path, audio_path, 
+    data = get_facerender_data(coeff_path, crop_pic_path, first_coeff_path, None, 
                                 batch_size, input_yaw_list, input_pitch_list, input_roll_list,
                                 expression_scale=args.expression_scale, still_mode=args.still, preprocess=args.preprocess, size=args.size)
     
